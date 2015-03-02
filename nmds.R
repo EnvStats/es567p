@@ -1,6 +1,6 @@
 # Bern - NMDS
 # ~~ Nonmetric Multidimensional Scaling with Stable Solution from Random Starts, 
-# Axis Scaling and Species Scores. Alternative to MANOVA ~~
+# Axis Scaling and Species Scores. 
 
 # Adequacy is dependant on: 
 # Stress value < 10, check Shepard plot for outliers, Check distortion: select top 10% of values 
@@ -18,8 +18,8 @@ env <-ap[,c(9:12)] #Environemtal group
 
 library(vegan)
 library(MASS)
-mod<-metaMDS(Y,k=2,trace=T,autotransform =F) #MDS with 2 dimension
-br<-vegdist(Y)  #calculate Bray-Curtis distance among all sites
+mod<-metaMDS(Y,k=2,trace=T,autotransform=F) #MDS with 2 dimension
+br<-vegdist(Y, method="bray")  #calculate Bray-Curtis distance, or other dependant on data
 stressplot(mod,br)  #generate a Sharperd diagram by plotting BC between sites against Eucledian distance between sites in NMDS 
 mod$stress #check for NMDS' stress value
 round(mod$species,2)
