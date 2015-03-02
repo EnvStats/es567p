@@ -13,7 +13,7 @@
 apo <-read.csv("apoch.csv")
 ap <- apo[-c(32:33),] #removed becuase only two land form for R
 head(ap)
-Y<-as.matrix(ap[,c(2:7)]) #multivariate response variable matrix (morphology)
+Y<-as.matrix(ap[,c(2:8)]) #multivariate response variable matrix (morphology)
 env <-ap[,c(9:12)] #Environemtal group
 
 library(vegan)
@@ -52,6 +52,8 @@ with(env, ordihull(mod, group=sex, show="f", col="green")) #group = strata
 ### Spider shows fields
 with(env, ordispider(mod, group=eco4, lty=5, col="blue"))
 #-------------------
+
+
 
 #example from R
 data(dune)
