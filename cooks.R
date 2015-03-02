@@ -13,6 +13,8 @@ t(lres) #transposed
 par(mfrow = c(3,2))
 lm.ap <- lm(tl ~ chela + carp + cheli + tib + fem + abd, data = ap) 
 plot(lm.ap, which = 1:6)
+summary(lm.ap)
+anova(lm.ap)
 
 inflm.ap <- influence.measures(lm.ap)
 which(apply(inflm.ap$is.inf, 1, any)) # which observations are influential
