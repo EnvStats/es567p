@@ -79,7 +79,7 @@ title(main="Sample site dispersion")
 ### ~~ Hypothesis Tests ~~ ####
 ### Analysis of variance using distance matrices-hypothesis test (with strata);
 ### uses a permutation test with pseudo-F ratios
-adonis(ap ~ form*sex*eco4, data=ap.env, perm=999) # Eco4 is similar to land form
+adonis(ap ~ form*sex*eco4, data=ap.env, perm=999) 
 
 ### ANOSIM-test statistically whether there is a significant difference between 
 ### two or more groups of sampling units.
@@ -94,14 +94,6 @@ summary(apoE.ano)
 plot(apoS.ano)
 plot(apoF.ano)
 plot(apoE.ano)
-
-data(dune)
-data(dune.env)
-dune.dist <- vegdist(dune)
-attach(dune.env)
-dune.ano <- anosim(dune.dist, Management)
-summary(dune.ano)
-plot(dune.ano)
 
 
 ### ---- Optional Spider Plots ----
@@ -131,6 +123,4 @@ with(env, ordihull(mod, group=form, show="C", col="green")) #group = strata
 with(env, ordihull(mod, group=form, show="T", col="blue"))
 ### Spider shows fields
 with(env, ordispider(mod, group=sex, lty=5, col="blue"))
-
-
 
