@@ -13,10 +13,12 @@
 
 ### ---- Data ----
 dta <-read.csv("apoch.csv")
-apo <- dta[-c(32:33),] # only two sites for land form R
-head(apo)
+apo<-droplevels(subset(apo, form!="R"))
+
+summary(apo)
+ap <-apo[,c(2:8)]
 Y<-as.matrix(apo[,c(2:8)]) # multivariate response variable matrix (morphology)
-env <-apo[,c(9:14)] # Environemtal group
+ap.env <-apo[,c(9:14)] # Environemtal group
 
 ### -----NMDS Model-----
 library(vegan)
@@ -72,16 +74,32 @@ title(main="Sample site dispersion")
 
 
 ### hypothesis test (with strata)
-adonis(Y ~ form*sex*eco4, data=env, perm=999) # Eco4 is similar to land form
+adonis(Y ~ form*sex*eco4, data=ap.env, perm=999) # Eco4 is similar to land form
 
-apo.dist <-vegdist(Y)
-attach(env)
-apoS.ano <-anosim(apo.dist,sex)
-apoF.ano <-anosim(apo.dist,form)
+### ANOSIM-test statistically whether there is a significant difference between 
+### two or more groups of sampling units.
+ap.dist <-vegdist(ap)
+attach(ap.env)
+apoS.ano <-anosim(ap.dist,sex)
+apoF.ano <-anosim(ap.dist,form)
+apoE.ano <-anosim(ap.dist,eco4)
 summary(apoS.ano)
 summary(apoF.ano)
+summary(apoE.ano)
 plot(apoS.ano)
 plot(apoF.ano)
+plot(apoE.ano)
+
+data(dune)
+data(dune.env)
+dune.dist <- vegdist(dune)
+attach(dune.env)
+dune.ano <- anosim(dune.dist, Management)
+summary(dune.ano)
+plot(dune.ano)
+
+
+
 
 ### ---- Optional Spider Plots ----
 par(mfrow=c(1,2))
@@ -110,7 +128,6 @@ with(env, ordihull(mod, group=form, show="C", col="green")) #group = strata
 with(env, ordihull(mod, group=form, show="T", col="blue"))
 ### Spider shows fields
 with(env, ordispider(mod, group=sex, lty=5, col="blue"))
-
 
 
 
