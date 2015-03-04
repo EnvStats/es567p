@@ -14,16 +14,14 @@
 ### ---- Data ----
 dta <-read.csv("apoch.csv")
 apo<-droplevels(subset(apo, form!="R"))
-
 summary(apo)
-ap <-apo[,c(2:8)]
-Y<-as.matrix(apo[,c(2:8)]) # multivariate response variable matrix (morphology)
-ap.env <-apo[,c(9:14)] # Environemtal group
+ap <-apo[,c(2:8)]# multivariate response variable matrix (morphology)
+ap.env <-apo[,c(9:14)] # Environemtal groups
 
 ### -----NMDS Model-----
 library(vegan)
 library(MASS)
-mod <- metaMDS(Y,k=2,trace=T,distance="bray",autotransform=F,trymax = 20) #MDS with 2 dimension
+mod <- metaMDS(ap,k=2,trace=T,distance="bray",autotransform=F,trymax = 99) #MDS with 2 dimension
 names(mod)# what type of informatin is produced from NMDS.
 
 br<-vegdist(Y, method="bray") # calculate Bray-Curtis distance, or other dependant on data type
@@ -31,8 +29,8 @@ stressplot(mod,br,p.col="lemonchiffon3",l.col="darkolivegreen",lwd=2)
 legend("bottomright",c("Stress = 0.191"))
 stressplot(mod,br,pch=21,bg="beige",p.col="lemonchiffon3",l.col="darkolivegreen")  # Generate a Sharperd diagram by plotting BC between sites against Eucledian distance between sites in NMDS 
 legend("bottomright",c("Stress = 0.191"))
-
 mod$stress # Check for MDS' stress value
+
 round(mod$species,2) # Variables contribution to MDS axis
 
 cor(mod$points[,1],apo[,c(2:8)]) # Variable correlation with axis MDS1
@@ -56,14 +54,14 @@ cor.matrix(mrphMDS2)
 
 ####~~~~ Sydney's Plots ~~~~####
 par(mfrow=c(1,2))
-plot(mod$points[,1], mod$points[,2], pch=as.numeric(apo$sex),col=c("red","blue")[apo$sex], xlab="NMDS 1", ylab="NMDS 2")
-legend("topright",c("F","M"),pch=c(1,2),col=c("red","blue"),inset=.02) 
+plot(mod$points[,1], mod$points[,2], pch=as.numeric(apo$sex),col=c("red","darkgreen")[apo$sex], xlab="NMDS 1", ylab="NMDS 2")
+legend("topright",c("F","M"),pch=c(1,2),col=c("red","darkgreen"),inset=.02) 
 title(main="Chela gradient - Axis 1")
 abline(v=(seq(0,100,25)), col="lightgray", lty="dotted")
 abline(h=(seq(0,100,25)), col="lightgray", lty="dotted")
 
-plot(mod$points[,1], mod$points[,2], pch=as.numeric(apo$form),col=c(1,2,3,4)[apo$form], xlab="NMDS 1", ylab="NMDS 2") 
-legend("topright",c("A","C","T"),pch=c(1,2,4),col=c(1,2,4),inset=.02) 
+plot(mod$points[,1], mod$points[,2], pch=as.numeric(apo$form),col=c(2,3,4)[apo$form], xlab="NMDS 1", ylab="NMDS 2") 
+legend("topright",c("A","C","T"),pch=c(1,2,3),col=c(2,3,4),inset=.02) 
 title(main="Femor gradient - Axis 2")
 abline(v=(seq(0,100,25)), col="lightgray", lty="dotted")
 abline(h=(seq(0,100,25)), col="lightgray", lty="dotted")
@@ -73,8 +71,9 @@ symbols(apo$LAT, apo$LONG,circles=apo$eco4, inches=0.2, add=T, lwd=2)
 title(main="Sample site dispersion")
 
 
-### hypothesis test (with strata)
-adonis(Y ~ form*sex*eco4, data=ap.env, perm=999) # Eco4 is similar to land form
+### Analysis of variance using distance matrices-hypothesis test (with strata);
+### uses a permutation test with pseudo-F ratios
+adonis(ap ~ form*sex*eco4, data=ap.env, perm=999) # Eco4 is similar to land form
 
 ### ANOSIM-test statistically whether there is a significant difference between 
 ### two or more groups of sampling units.
