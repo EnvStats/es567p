@@ -31,6 +31,13 @@ stressplot(mod,br,pch=21,bg="beige",p.col="lemonchiffon3",l.col="darkolivegreen"
 legend("bottomright",c("Stress = 0.191"))
 mod$stress # Check for MDS' stress value
 
+plot(mod, type="n") #triplot
+points(mod, "sites",pch=21, col="darkgreen", bg="lightgrey", cex=1.2)
+text(mod, dis="cn", col="red")
+text(mod, "species", col="red", cex=0.8)
+abline(v=(seq(0,100,25)), col="lightgray", lty="dotted")
+abline(h=(seq(0,100,25)), col="lightgray", lty="dotted")
+
 round(mod$species,2) # Variables contribution to MDS axis
 
 cor(mod$points[,1],apo[,c(2:8)]) # Variable correlation with axis MDS1
@@ -43,13 +50,12 @@ plot(mod$points[,2],apo[,2],xlab="MDS 2",ylab="fem")
 plot(mod$points[,2],apo[,3],xlab="MDS 2",ylab="chela")
 
 ### Source cor.matrix, for NMDS 1 & 2 correlated with original variables
-mrph <- apo[,c(2:8)]
 MDS1 <- mod$points[,1]
-mrphMDS1 <-cbind(MDS1,mrph)
-cor.matrix(mrphMDS1)
+apMDS1 <-cbind(MDS1,ap)
+cor.matrix(apMDS1)
 
 MDS2 <- mod$points[,2]
-mrphMDS2 <-cbind(MDS2,mrph)
+apMDS2 <-cbind(MDS2,ap)
 cor.matrix(mrphMDS2)
 
 ####~~~~ Sydney's Plots ~~~~####
@@ -70,7 +76,7 @@ plot(apo$LAT, apo$LONG,type='n', xlab="Latitude", ylab="Longitude")
 symbols(apo$LAT, apo$LONG,circles=apo$eco4, inches=0.2, add=T, lwd=2)  
 title(main="Sample site dispersion")
 
-
+### ~~ Hypothesis Tests ~~ ####
 ### Analysis of variance using distance matrices-hypothesis test (with strata);
 ### uses a permutation test with pseudo-F ratios
 adonis(ap ~ form*sex*eco4, data=ap.env, perm=999) # Eco4 is similar to land form
@@ -96,8 +102,6 @@ attach(dune.env)
 dune.ano <- anosim(dune.dist, Management)
 summary(dune.ano)
 plot(dune.ano)
-
-
 
 
 ### ---- Optional Spider Plots ----
