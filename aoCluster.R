@@ -1,4 +1,4 @@
-# Bern - Looking for patterns in morpological distribution
+# Bern - CA,Looking for patterns in morpological distribution
 
 apo<-read.csv("apoch.csv")
 ##Data exploration##
