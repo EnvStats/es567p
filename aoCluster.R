@@ -1,6 +1,7 @@
 # Bern - CA,Looking for patterns in morpological distribution
 
-apo<-read.csv("apoch.csv")
+dta <- read.csv("apoch.csv")
+apo <- droplevels(subset(dta,eco4!="WCLV" & eco4!="WKF" & eco4!="PVB" & form!="R"))
 ##Data exploration##
 br <-apo[,c(2:8)] #br is body ratios
 
