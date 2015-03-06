@@ -19,16 +19,11 @@ summary(apo)
 ap <- apo[,c(2:8)]# multivariate response variable matrix (morphology)
 env <- apo[,c(9:14)] # Environemtal groups
 
-#center variables & scale to Z score
-ap1 <- scale(ap, center = T, scale = T)
-
-boxplot(ap1)
-
 
 ### -----NMDS Model-----
 library(vegan)
 library(MASS)
-mod <- metaMDS(ap,k=2,trace=T,distance="bray",autotransform=F,trymax = 999) #MDS with 2 dimension
+mod <- metaMDS(ap,k=3,trace=T,distance="bray",autotransform=F,trymax = 999) #MDS with 2 dimension
 names(mod)# what type of informatin is produced from NMDS.
 round(mod$species,2) # Variables contribution to MDS axis
 
@@ -40,17 +35,17 @@ stressplot(mod,p.col="lemonchiffon3",l.col="darkolivegreen",lwd=2, main=paste("N
 plot(mod,type="t", main=paste("NMDS/Bray - Stress =", round(mod$stress,3)))
 legend("bottomright",pch=round(mod$species,2))
 
-cor(mod$points[,1],ap1[,c(2:8)]) # Variable correlation with axis MDS1
-cor(mod$points[,2],ap1[,c(2:8)]) # Variable correlation with axis MDS2
+cor(mod$points[,1],apo[,c(2:8)]) # Variable correlation with axis MDS1
+cor(mod$points[,2],apo[,c(2:8)]) # Variable correlation with axis MDS2
 
 par(mfrow=c(2,2))
-plot(mod$points[,1],ap1[,3],xlab="MDS 1",ylab="chela", col="blue") # Plots original variable against MDS.
+plot(mod$points[,1],apo[,3],xlab="MDS 1",ylab="chela", col="blue") # Plots original variable against MDS.
 legend("topright",c("r = -0.88"))
-plot(mod$points[,1],ap1[,2],xlab="MDS 1",ylab="fem") # Only variables with r > .50
+plot(mod$points[,1],apo[,2],xlab="MDS 1",ylab="fem") # Only variables with r > .50
 legend("topright",c("r = -0.44"))
-plot(mod$points[,2],ap1[,2],xlab="MDS 2",ylab="fem", col="red")
+plot(mod$points[,2],apo[,2],xlab="MDS 2",ylab="fem", col="red")
 legend("topright",c("r = -0.83"))
-plot(mod$points[,2],ap1[,3],xlab="MDS 2",ylab="chela")
+plot(mod$points[,2],apo[,3],xlab="MDS 2",ylab="chela")
 legend("topright",c("r = 0.36"))
 
 ### Source cor.matrix, for NMDS 1 & 2 correlated with original variables
@@ -63,31 +58,31 @@ apMDS2 <-cbind(MDS2,ap)
 cor.matrix(apMDS2)
 
 ####~~~~ Sydney's Plots ~~~~####
-par(mfrow=c(1,2))
-plot(mod$points[,1], mod$points[,2], pch=as.numeric(ap1$sex),col=c("red","darkgreen")[ap1$sex], xlab="NMDS 1", ylab="NMDS 2")
+par(mfrow=c(2,2))
+plot(mod$points[,1], mod$points[,2], pch=as.numeric(apo$sex),col=c("red","darkgreen")[apo$sex], xlab="NMDS 1", ylab="NMDS 2")
 legend("topright",c("F","M"),pch=c(1,2),col=c("red","darkgreen"),inset=.02) 
 title(main="Chela gradient - Axis 1")
 abline(v=(seq(0,100,25)), col="lightgray", lty="dotted")
 abline(h=(seq(0,100,25)), col="lightgray", lty="dotted")
 text(mod, "species", col="grey", cex=0.8)
 
-plot(mod$points[,1], mod$points[,2], pch=as.numeric(ap1$form),col=c(2,"lightgrey",4)[ap1$form], xlab="NMDS 1", ylab="NMDS 2") 
+plot(mod$points[,1], mod$points[,2], pch=as.numeric(apo$eco4),col=c(1,2,3,"grey",5)[apo$eco4], xlab="NMDS 1", ylab="NMDS 2") 
+legend("topright",c("CPL","NFRF","OCF","V","WH"),pch=c(1,2,3,4,5),col=c(1,2,3,4,5),inset=.02) 
+title(main="Eco4")
+abline(v=(seq(0,100,25)), col="lightgray", lty="dotted")
+abline(h=(seq(0,100,25)), col="lightgray", lty="dotted")
+text(mod, "species", col="grey", cex=0.8)
+
+plot(mod$points[,1], mod$points[,2], pch=as.numeric(apo$form),col=c(2,"lightgrey",4)[apo$form], xlab="NMDS 1", ylab="NMDS 2") 
 legend("topright",c("A","C","T"),pch=c(1,2,3),col=c(2,"lightgrey",4),inset=.02) 
 title(main="Femor gradient - Axis 2")
 abline(v=(seq(0,100,25)), col="lightgray", lty="dotted")
 abline(h=(seq(0,100,25)), col="lightgray", lty="dotted")
 text(mod, "species", col="grey", cex=0.8)
 
-plot(mod$points[,1], mod$points[,2], pch=as.numeric(ap1$eco4),col=c(1,2,3,4,5)[ap1$eco4], xlab="NMDS 1", ylab="NMDS 2") 
-legend("topright",c("CPL","NFRF","OCF","V","WH"),pch=c(1,2,3,4,5),col=c(1,2,3,4,5),inset=.02) 
-title(main="Eco4")
-abline(v=(seq(0,100,25)), col="lightgray", lty="dotted")
-abline(h=(seq(0,100,25)), col="lightgray", lty="dotted")
-text(mod, "species", col="red", cex=0.8)
 
-
-plot(ap1$LAT, ap1$LONG,type='n', xlab="Latitude", ylab="Longitude")
-symbols(ap1$LAT, ap1$LONG,circles=ap1$eco4, inches=0.2, add=T, lwd=2)  
+plot(apo$LAT, apo$LONG,type='n', xlab="Latitude", ylab="Longitude")
+symbols(apo$LAT, apo$LONG,circles=apo$eco4, inches=0.2, add=T, lwd=2)  
 title(main="Sample site dispersion")
 
 ### ~~ Hypothesis Tests ~~ ####
@@ -96,15 +91,26 @@ title(main="Sample site dispersion")
 ### two or more groups of sampling units.
 ap.dist <-vegdist(ap)
 attach(env)
-ap1S.ano <-anosim(ap.dist,sex)
-ap1F.ano <-anosim(ap.dist,form)
-ap1E.ano <-anosim(ap.dist,eco4)
-summary(ap1S.ano)
-summary(ap1F.ano)
-summary(ap1E.ano)
-plot(ap1S.ano)
-plot(ap1F.ano)
-plot(ap1E.ano)
+apoS.ano <-anosim(ap.dist,sex)
+apoF.ano <-anosim(ap.dist,form)
+apoE.ano <-anosim(ap.dist,eco4)
+summary(apoS.ano)
+summary(apoF.ano)
+summary(apoE.ano)
+par(mfrow=c(2,2))
+plot(apoS.ano, title(main="Gender"))
+plot(apoF.ano, title(main="Land form"))
+plot(apoE.ano, title(main="Eco4"))
+detach(env)
+
+### Pairwise t-test and aov for differences between groups
+pairwise.t.test(mod$points[,1], env$sex, p.adj = "bonferroni") 
+pairwise.t.test(mod$points[,2], env$form, p.adj = "bonferroni")
+pairwise.t.test(mod$points[,2], env$eco4, p.adj = "bonferroni")
+
+TukeyHSD(aov(mod$points[,1] ~ env$sex, ap)) 
+TukeyHSD(aov(mod$points[,2] ~ env$form, ap))
+TukeyHSD(aov(mod$points[,2] ~ env$eco4, ap))
 
 
 ### ---- Optional Spider Plots ----
