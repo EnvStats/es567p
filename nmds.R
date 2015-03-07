@@ -13,9 +13,12 @@
 
 ### ---- Data ----
 dta <- read.csv("apoch.csv")
-apoch <- droplevels(subset(dta,eco4!="WCLV" & eco4!="WKF" & eco4!="PVB" & form!="R"))
-apo <-apoch[-c(67),]
-ap <- apo[,c(2:8)]# multivariate response variable matrix (morphology)
+#apoch <- droplevels(subset(dta,eco4!="WCLV" & eco4!="WKF" & eco4!="PVB" & form!="R"))
+apoch <- droplevels(subset(dta,form!="R"))
+apo <-apoch[-c(70),] #outlier
+
+ap1 <- apo[,c(2:8)]# multivariate response variable matrix (morphology)
+ap <-as.data.frame(scale(ap1, center=F, scale=T)) # total lenght is not a ratio like other variables
 env <- apo[,c(9:14)] # Environemtal groups
 summary(apo)
 boxplot(ap)
@@ -27,25 +30,28 @@ library(vegan)
 library(MASS)
 ## Run multiple times to reduce the risk of getting stuck in local min, trace=T so you can see
 ## Euclidean distances of a matrix where columns are centred, have unit variance, and are uncorrelated
-mod <- metaMDS(ap,k=2,trace=T,distance="euclidian",autotransform=F,trymax = 20) #nMDS with k=2 dimensions
+mod <- metaMDS(ap,k=3,trace=T,distance="euclidian",autotransform=F,trymax = 20) #nMDS with k=2 dimensions
 names(mod)# Type of informatin produced from nMDS.
 round(mod$species,2) # Variables contribution to nMDS axis
 
 par(mfrow=c(1,2)) #Stress plot and nMDS plot
 br<-vegdist(ap, method="bray") # calculate Bray-Curtis distance, or other dependant on data type
-stressplot(mod,br,p.col="lemonchiffon3",l.col="darkolivegreen",lwd=2, main="nMDS/Bray")
+stressplot(mod,br,p.col="lemonchiffon3",l.col="darkolivegreen",lwd=2, main="nMDS/Euc.")
 legend("bottomright",c(paste("Stress =",round(mod$stress*100,2))))
-plot(mod,type="t", main=paste("NMDS/Bray"))
+plot(mod,type="t", main=paste("nMDS Dim 1 vs Dim 2"))
 
 #Variable Correlation with MDS1 & 2 Axis.
 cor(mod$points[,1],apo[,c(2:8)]) # Variable correlation with axis MDS1
 cor(mod$points[,2],apo[,c(2:8)]) # Variable correlation with axis MDS2
 
-par(mfrow=c(1,2)) # Correlation plots
-plot(mod$points[,1],apo[,3],xlab="nMDS 1",ylab="chela", col="blue") # Plots original variable against MDS.
-legend("topright",c("r = -0.91"))
-plot(mod$points[,2],apo[,2],xlab="nMDS 2",ylab="fem", col="red")
-legend("topright",c("r = 0.86"))
+par(mfrow=c(2,2)) # Correlation plots
+plot(mod$points[,1],ap1[,3],xlab="nMDS 1",ylab="tib", col="blue") # Plots original variable against MDS.
+legend("topright",c("r = -0.89"))
+plot(mod$points[,2],ap1[,5],xlab="nMDS 2",ylab="abd", col="red")
+legend("topright",c("r = -0.80"))
+plot(mod$points[,2],ap1[,4],xlab="nMDS 2",ylab="carp", col="green")
+legend("topright",c("r = -0.61"))
+
 
 ### Source cor.matrix, for NMDS 1 & 2 correlated with original variables
 MDS <- mod$points
@@ -82,15 +88,17 @@ title(main="Sample site dispersion")
 
 ### ANOSIM-test statistically whether there is a significant difference between 
 ### two or more groups of sampling units.
-ap.dist <-vegdist(ap, "euclidean")
+
 # Mahalanobis distances are Euclidean distances of a matrix where columns are centred, 
 ## have unit variance, and are uncorrelated. The index is not commonly used for community data, 
 ## but it is sometimes used for environmental variables. The calculation is based on transforming 
 ## data matrix and then using Euclidean distances following Mardia et al. (1979).
-attach(env)
+
 ## If two groups of sampling units are really different in their species composition, 
 ## then compositional dissimilarities between the groups ought to be greater than those within the groups.
 ## The anosim statistic R is based on the difference of mean ranks between groups (r_B) and within groups (r_W):
+ap.dist <-vegdist(ap, "euclidean")
+attach(env)
 apoS.ano <-anosim(ap.dist,sex)
 apoF.ano <-anosim(ap.dist,form)
 apoE.ano <-anosim(ap.dist,eco4)
