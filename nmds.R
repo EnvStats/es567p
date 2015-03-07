@@ -28,14 +28,14 @@ cor.matrix(ap)
 ### -----nMDS Model-----
 library(vegan)
 library(MASS)
-## Run multiple times to reduce the risk of getting stuck in local min, trace=T so you can see
+## Run multiple times to reduce the risk of getting stuck in local min, trace=T so you can see how many runs
 ## Euclidean distances of a matrix where columns are centred, have unit variance, and are uncorrelated
 mod <- metaMDS(ap,k=3,trace=T,distance="euclidian",autotransform=F,trymax = 20) #nMDS with k=2 dimensions
 names(mod)# Type of informatin produced from nMDS.
 round(mod$species,2) # Variables contribution to nMDS axis
 
 par(mfrow=c(1,2)) #Stress plot and nMDS plot
-br<-vegdist(ap, method="bray") # calculate Bray-Curtis distance, or other dependant on data type
+br<-vegdist(ap, method="euclidian") # calculate Euclidian distance, or other dependant on data type
 stressplot(mod,br,p.col="lemonchiffon3",l.col="darkolivegreen",lwd=2, main="nMDS/Euc.")
 legend("bottomright",c(paste("Stress =",round(mod$stress*100,2))))
 plot(mod,type="t", main=paste("nMDS Dim 1 vs Dim 2"))
@@ -82,7 +82,7 @@ abline(h=(seq(0,100,25)), col="lightgray", lty="dotted")
 ### distance plot
 plot(apo$LAT, apo$LONG,type='n', xlab="Latitude", ylab="Longitude")
 symbols(apo$LAT, apo$LONG,circles=apo$eco4, inches=0.2, add=T, lwd=2)  
-title(main="Sample site dispersion")
+title(main="eco4")
 
 ### ~~ Hypothesis Tests ~~ ####
 
@@ -121,7 +121,7 @@ TukeyHSD(aov(mod$points[,2] ~ env$form, ap))
 TukeyHSD(aov(mod$points[,2] ~ env$eco4, ap))
 
 ### Optional adonis ANOVA
-adonis(ap ~ sex*form*eco4, data=env, permutations=999) #Original data
+adonis(ap1 ~ sex*form*eco4, data=env, permutations=999) #Original data
 
 ### ---- Optional Spider Plots ----
 par(mfrow=c(1,2))
