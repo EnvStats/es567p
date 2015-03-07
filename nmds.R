@@ -25,7 +25,9 @@ cor.matrix(ap)
 ### -----nMDS Model-----
 library(vegan)
 library(MASS)
-mod <- metaMDS(ap,k=3,trace=T,distance="bray",autotransform=F,trymax = 20) #nMDS with k=3 dimensions
+## Run multiple times to reduce the risk of getting stuck in local min, trace=T so you can see
+## Euclidean distances of a matrix where columns are centred, have unit variance, and are uncorrelated
+mod <- metaMDS(ap,k=2,trace=T,distance="euclidian",autotransform=F,trymax = 20) #nMDS with k=2 dimensions
 names(mod)# Type of informatin produced from nMDS.
 round(mod$species,2) # Variables contribution to nMDS axis
 
